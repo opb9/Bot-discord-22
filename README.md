@@ -1,11 +1,88 @@
-<div align="center">
+# 📚 Study Bot — منظومة الدراسة والتحديات والاقتصاد
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+منظومة متكاملة لإدارة مجتمعات الدراسة في Discord والويب، بتوقيت العراق (`UTC+3`)، مع قاعدة بيانات `SQLite` (`node:sqlite` + `WAL` + ترحيلات مرقّمة `v1`–`v6`)، ولوحة تحكم تفاعلية بـ React + Express، ومحرك `discord.js` v14 مدمج للتشغيل الفعلي عبر `DISCORD_TOKEN`.
 
-  <h1>Built with AI Studio</h2>
+---
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## المميزات الأساسية
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+- **التسجيل الإلزامي والبنك المستقل**: فتح حساب بنكي (`SB-...`) تلقائياً، مكافأة ترحيبية، دفتر أستاذ غير قابل للتعديل `bank_ledger`، تحويلات آمنة، ومفاتيح منع التكرار (`idempotency_keys`).
+- **الدراسة العادية والموثّقة بالشاشة**: احتساب وقت الدراسة في الرومات الصوتية المعتمدة، مع اشتراط مشاركة الشاشة للدراسة الموثقة (الكاميرا وحدها لا تكفي)، دون ازدواجية في الدقائق، ومع استعادة الجلسات المتوقفة عند إعادة التشغيل.
+- **38 مهنة متدرجة (37 قابلة للشراء + الطالب) + 12 وظيفة مجتمعية + صور PNG شفافة**:
+  - 5 مستويات تصاعدية (`Lv.1+` إلى `Lv.45+`) مع شروط دراسة أسبوعية لاستلام الراتب.
+  - دعم تلقائي للصور الشفافة في `avatars/<job_id>_male.png` و`avatars/<job_id>_female.png` (أو `<job_id>.png`) في بطاقة الويب وأمر `/profile` في Discord.
+- **اقتصاد متوازن مضاد للتضخم**:
+  - منحنى عائد متناقص للعملات بعد 180 و360 دقيقة دراسة يومياً (مع بقاء الخبرة `XP` 1:1).
+  - ضريبة توازن الثروة التصاعدية على الرواتب (`5%` / `10%` / `15%`) للأرصدة العالية.
+  - رسم حرق `3%` على التحويلات الكبيرة (`>= 5,000` 🪙) + خزينة النقابة وترقية مستواها كبالوعة عملات جماعية.
+- **منظومة التحفيز الطلابي**: المهام اليومية، مضاعف السلسلة (`1.0x–2.0x`)، دروع حماية السلسلة (`🛡️`)، صندوق التركيز اليومي، دورات بومودورو (`25د / 50د`)، تتبع المواد والامتحانات، وخصومات الدراسة بالمتجر.
+- **التحديات الدراسية (`1v1`, `2v2`, `4v4`, `8v8`)، القروض، النقابات، لوحات المتصدرين، والإدارة والنسخ الاحتياطي الموثق**.
 
-</div>
+---
+
+## 1. رفع المشروع إلى GitHub
+
+بعد تحميل مجلد المشروع وفك ضغطه محلياً:
+
+```bash
+git init
+git add .
+git commit -m "Complete Study Bot Discord & Web Ecosystem"
+git branch -M main
+git remote add origin https://github.com/<USERNAME>/<REPO_NAME>.git
+git push -u origin main
+```
+
+> ملف `.gitignore` مهيأ مسبقاً لمنع رفع `.env` و`node_modules/` و`dist/` وقواعد البيانات المحلية `data/` و`backups/`.
+
+---
+
+## 2. إعداد البوت في Discord Developer Portal
+
+1. افتح [Discord Developer Portal](https://discord.com/developers/applications) واختر تطبيقك (أو أنشئ **New Application**).
+2. من تبويب **Bot**:
+   - انسخ التوكن (**Reset Token**) واحفظه في `.env` داخل `DISCORD_TOKEN` (لا تشاركه أو ترفعه لـ GitHub أبداً).
+3. من تبويب **OAuth2 → URL Generator**:
+   - فعّل النطاقين (**Scopes**): `bot` و `applications.commands`.
+   - فعّل صلاحيات البوت (**Bot Permissions**):
+     - `View Channels`
+     - `Send Messages`
+     - `Embed Links`
+     - `Attach Files` *(لإظهار صور المهن الشفافة على `/profile`)*
+     - `Read Message History`
+   - افتح الرابط المُولّد وأضف البوت إلى سيرفرك.
+
+---
+
+## 3. التشغيل (محلياً أو على استضافة Node 22+)
+
+يتطلب **Node.js 22.5+** (لاستخدام `node:sqlite` المدمج).
+
+```bash
+# 1. تثبيت الاعتماديات
+npm install
+
+# 2. إعداد متغيرات البيئة (لا ترفع .env إلى Git)
+cp .env.example .env
+# ضع DISCORD_TOKEN=توكن_البوت داخل .env
+# (اختياري للتجربة الفورية للأوامر) ضع DISCORD_GUILD_ID=معرف_السيرفر
+
+# 3. البناء والتشغيل الإنتاجي (يشغل الويب وبوت ديسكورد معاً)
+npm run build
+npm start
+
+# أو في وضع التطوير
+npm run dev
+```
+
+بعد دخول البوت للسيرفر:
+- استخدم `/admin_room_add` من داخل Discord لاعتماد الرومات الصوتية المسموحة للدراسة.
+- استخدم `/register` ثم ادخل الروم الصوتي المعتمدة لتبدأ الدراسة العادية والموثقة بمشاركة الشاشة تلقائياً!
+
+---
+
+## تشغيل الاختبارات الآلية
+
+```bash
+./node_modules/.bin/tsx --test --test-concurrency=1 tests/*.test.ts
+```
